@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/index.css"> 
+    <link rel="shortcut icon" href="/img/logo2.png" type="image/x-icon">
+    <script type="module" src="/js/firebaseconect.js"></script>
+    <script type="module" src="/js/login.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <title>Expediente Clinico Coscami</title>
+</head>
+<body>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <div class="login-box">
+        <h2>Login</h2>
+        <img src="/img/logo.png" width="350" height="100" alt="Logo Centro Medico COSCAMI" class="login-image">
+        <form id="login-form">
+            <div class="user-box">
+                <i class="fas fa-envelope"></i> <!-- Icono para el campo de email -->
+                <input type="email" id="email" name="email" placeholder="Em@il" required>
+            </div>
+            <div class="user-box">
+                <i class="fas fa-lock"></i> <!-- Icono para el campo de contraseña -->
+                <input class="placeholder" type="password" id="password" name="password" placeholder="Password" required>
+                 <!-- Icono para mostrar/ocultar contraseña -->
+            </div>
+            <div>
+                <button type="submit" id="signin-btn">Iniciar sesión</button>
+            </div>
+        </form>
+    </div>
+    <script type="module" src="/public/js/firebaseconect.js"></script>
+    <script type="module" src="/public/js/login.js"></script>
+    <script>// Suponiendo que estás utilizando Firebase Authentication para autenticación
+        firebase.auth().onAuthStateChanged(function(user) {
+            if (!user) {
+                // Usuario no autenticado, redirigir a la página de inicio de sesión
+                window.location.href = "./html/index.html";
+            }
+        });
+        </script>
+</body>
+</html>

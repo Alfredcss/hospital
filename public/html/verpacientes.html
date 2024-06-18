@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" href="/img/logo2.png" type="image/x-icon">
+  <title>Lista de Pacientes</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+  <link rel="stylesheet" href="/public/css/verpaciente.css">
+  <style>
+      .card {
+        width: 100%;
+        margin: 20px;
+        border-radius: 6px;
+        overflow: hidden;
+        background: #fff;
+        box-shadow: 0px 1px 10px rgba(0,0,0,0.2);
+        cursor: default;
+        transition: all 400ms ease;
+      }
+      
+      .card:hover {
+        box-shadow: 1px 5px 20px rgba(0,0,0,0.4);
+        transform: translateY(-3%);
+      }
+      
+      .card .contenido {
+        padding: 15px;
+        text-align: center;
+      }
+      
+      .card .contenido p {
+        line-height: 1.5;
+      }
+  </style>
+</head>
+<body>
+    <header></header>
+      
+    <div class="container my-4">
+        <div class="input-group mb-3">
+            <input type="text" id="searchInput" class="form-control" placeholder="Buscar paciente...">
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="button" id="searchButton">Buscar</button>
+            </div>
+        </div>
+        <div id="pacientes-list"></div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="detallesModal" tabindex="-1" role="dialog" aria-labelledby="detallesModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="detallesModalLabel">Detalles del Paciente</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modal-body-content">
+                    <!-- Contenido dinámico irá aquí -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <!-- Aquí puedes agregar tu pie de página si es necesario -->
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Firebase y otros scripts -->
+    <script type="module" src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"></script>
+    <script type="module" src="/js/verpaciente.js"></script> <!-- Asegúrate de que este sea el archivo correcto para mostrar pacientes -->
+    <script type="module" src="/js/firebaseconect.js"></script>
+    <script type="module">
+        // Script para manejo de cuenta y logout
+        import { ManageAccount } from '/js/firebaseconect.js';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const manageAccount = new ManageAccount();
+            const logoutButton = document.getElementById('logoutButton');
+
+            if (logoutButton) {
+                logoutButton.addEventListener('click', () => {
+                    manageAccount.signOut();
+                });
+            }
+        });
+    </script>
+    <script src="/js/scripts.js"></script> <!-- Asegúrate de que este sea el archivo correcto para tus scripts generales -->
+</body>
+</html>

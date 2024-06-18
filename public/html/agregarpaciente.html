@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="/img/logo2.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/formulario.css">
+    <title>Expediente Clínico</title>
+    <style>
+        .to-top-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #333;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.to-top-button:hover {
+  background-color: #444;
+}
+    </style>
+</head>
+<body>
+    <header></header>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4"></nav>
+    
+
+    <div class="container">
+        <h1>Expediente Clínico</h1>
+        <form id="expedienteform" class="border p-4">
+            <!-- Hoja Frontal -->
+            <legend>Hoja Frontal</legend>
+            <div class="mb-3">
+                <label for="nombre" class="form-label">Nombre:</label>
+                <input type="text" class="form-control" id="nombre" name="nombre">
+            </div>
+            <div class="mb-3">
+                <label for="apellidos" class="form-label">Apellidos:</label>
+                <input type="text" class="form-control" id="apellidos" name="apellidos">
+            </div>
+            <div class="mb-3">
+                <label for="edad" class="form-label">Edad:</label>
+                <input type="number" class="form-control" id="edad" name="edad">
+            </div>
+            <div class="mb-3">
+                <label for="fechaNacimiento" class="form-label">Fecha de Nacimiento:</label>
+                <input type="date" class="form-control" id="fechaNacimiento" name="fechaNacimiento" >
+            </div>
+            <div class="mb-3">
+                <label for="genero" class="form-label">Género:</label>
+                <select class="form-control" id="genero" name="genero" >
+                    <option value="masculino">Masculino</option>
+                    <option value="femenino">Femenino</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="direccion" class="form-label">Dirección:</label>
+                <input type="text" class="form-control" id="direccion" name="direccion">
+            </div>
+            <div class="mb-3">
+                <label for="telefono" class="form-label">Teléfono:</label>
+                <input type="text" class="form-control" id="telefono" name="telefono">
+            </div>
+            <div class="mb-3">
+                <label for="grupo-etnico" class="form-label">Grupo Étnico:</label>
+                <input type="text" class="form-control" id="grupoetnico" name="grupoetnico">
+            </div>
+
+            <!-- Historia Clínica -->
+            <legend>Historia Clínica</legend>
+            <div class="mb-3">
+                <label for="antecedentes-heredofamiliares" class="form-label">Antecedentes Heredo Familiares:</label>
+                <textarea class="form-control" id="antecedentesheredofamiliares" name="antecedentesheredofamiliares"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="antecedentes-personales" class="form-label">Antecedentes Personales Patológicos:</label>
+                <textarea class="form-control" id="antecedentespersonales" name="antecedentespersonales"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="padecimiento-actual" class="form-label">Padecimiento Actual:</label>
+                <textarea class="form-control" id="padecimientoactual" name="padecimientoactual"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="interrogatorio-aparatos" class="form-label">Interrogatorio por Aparatos y Sistemas:</label>
+                <textarea class="form-control" id="interrogatorioaparatos" name="interrogatorioaparatos"></textarea>
+            </div>
+
+            <!-- Exploración Física -->
+            <legend>Exploración Física</legend>
+            <div class="mb-3">
+                <label for="habitus" class="form-label">Habitus Exterior:</label>
+                <textarea class="form-control" id="habitus" name="habitus"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="signos-vitales" class="form-label">Signos Vitales:</label>
+                <textarea class="form-control" id="signosvitales" name="signosvitales"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="peso" class="form-label">Peso:</label>
+                <input type="number" class="form-control" id="peso" name="peso">
+            </div>
+            <div class="mb-3">
+                <label for="talla" class="form-label">Talla:</label>
+                <input type="string" class="form-control" id="talla" name="talla">
+            </div>
+            <div class="mb-3">
+                <label for="datos-cabeza" class="form-label">Datos de Cabeza:</label>
+                <textarea class="form-control" id="datoscabeza" name="datoscabeza"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="datos-cuello" class="form-label">Datos de Cuello:</label>
+                <textarea class="form-control" id="datoscuello" name="datoscuello"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="datos-torax" class="form-label">Datos de Tórax:</label>
+                <textarea class="form-control" id="datostorax" name="datostorax"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="datos-abdomen" class="form-label">Datos de Abdomen:</label>
+                <textarea class="form-control" id="datosabdomen" name="datosabdomen"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="datos-miembros" class="form-label">Datos de Miembros:</label>
+                <textarea class="form-control" id="datosmiembros" name="datosmiembros"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="datos-genitales" class="form-label">Datos de Genitales:</label>
+                <textarea class="form-control" id="datosgenitales" name="datosgenitales"></textarea>
+            </div>
+
+            <!-- Estudios y Diagnóstico -->
+            <legend>Estudios y Diagnóstico</legend>
+            <div class="mb-3">
+                <label for="resultados-estudios" class="form-label">Resultados de Estudios de Laboratorio y Gabinete:</label>
+                <textarea class="form-control" id="resultadosestudios" name="resultadosestudios"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="diagnosticos" class="form-label">Diagnósticos o Problemas Clínicos:</label>
+                <textarea class="form-control" id="diagnosticos" name="diagnosticos"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="pronostico" class="form-label">Pronóstico:</label>
+                <textarea class="form-control" id="pronostico" name="pronostico"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="indicacion-terapeutica" class="form-label">Indicación Terapéutica:</label>
+                <textarea class="form-control" id="indicacionterapeutica" name="indicacionterapeutica"></textarea>
+            </div>
+            <!-- Nota de Interconsulta -->
+            <legend>Nota de Evolución</legend>
+            <div class="mb-3">
+                <label for="evolucion" class="form-label">Evolución y Actualización del Cuadro Clínico:</label>
+                <textarea class="form-control" id="evolucion" name="evolucion"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="signos-vitales-evolucion" class="form-label">Signos Vitales:</label>
+                <textarea class="form-control" id="signosvitalesevolucion" name="signosvitalesevolucion"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="resultados-relevantes" class="form-label">Resultados Relevantes de Estudios:</label>
+                <textarea class="form-control" id="resultadosrelevantes" name="resultadosrelevantes"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="diagnosticos-evolucion" class="form-label">Diagnósticos o Problemas Clínicos:</label>
+                <textarea class="form-control" id="diagnosticosevolucion" name="diagnosticosevolucion"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="pronostico-evolucion" class="form-label">Pronóstico:</label>
+                <textarea class="form-control" id="pronosticoevolucion" name="pronosticoevolucion"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="tratamiento-indicaciones" class="form-label">Tratamiento e Indicaciones Médicas:</label>
+                <textarea class="form-control" id="tratamientoindicaciones" name="tratamientoindicaciones"></textarea>
+            </div>
+
+            <!-- Nota de Interconsulta -->
+            <legend>Nota de Interconsulta</legend>
+            <div class="mb-3">
+                <label for="criterios-diagnosticos" class="form-label">Criterios Diagnósticos:</label>
+                <textarea class="form-control" id="criteriosdiagnosticos" name="criteriosdiagnosticos"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="plan-estudios" class="form-label">Plan de Estudios:</label>
+                <textarea class="form-control" id="planestudios" name="planestudios"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="sugerencias-diagnosticas" class="form-label">Sugerencias Diagnósticas y Tratamiento:</label>
+                <textarea class="form-control" id="sugerenciasdiagnosticas" name="sugerenciasdiagnosticas"></textarea>
+            </div>
+
+            <!-- Nota de Referencia/Traslado -->
+            <legend>Nota de Referencia/Traslado</legend>
+            <div class="mb-3">
+                <label for="establecimiento-envia" class="form-label">Establecimiento que Envía:</label>
+                <input type="text" class="form-control" id="establecimientoenvia" name="establecimientoenvia">
+            </div>
+            <div class="mb-3">
+                <label for="establecimiento-receptor" class="form-label">Establecimiento Receptor:</label>
+                <input type="text" class="form-control" id="establecimientoreceptor" name="establecimientoreceptor">
+            </div>
+            <div class="mb-3">
+                <label for="motivo-envio" class="form-label">Motivo de Envío:</label>
+                <textarea class="form-control" id="motivoenvio" name="motivoenvio"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="impresion-diagnostica" class="form-label">Impresión Diagnóstica:</label>
+                <textarea class="form-control" id="impresiondiagnostica" name="impresiondiagnostica"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="terapeutica-empleada" class="form-label">Terapéutica Empleada:</label>
+                <textarea class="form-control" id="terapeuticaempleada" name="terapeuticaempleada"></textarea>
+            </div>
+
+            <!-- Nota Médica en Urgencias -->
+            <legend>Nota Médica en Urgencias</legend>
+            <div class="mb-3">
+                <label for="fecha-hora-atencion" class="form-label">Fecha y Hora de Atención:</label>
+                <input type="datetime-local" class="form-control" id="fechahoraatencion" name="fechahoraatencion">
+            </div>
+            <div class="mb-3">
+                <label for="signos-vitales-urgencias" class="form-label">Signos Vitales:</label>
+                <textarea class="form-control" id="signosvitalesurgencias" name="signosvitalesurgencias"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="motivo-atencion" class="form-label">Motivo de la Atención:</label>
+                <textarea class="form-control" id="motivoatencion" name="motivoatencion"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="resumen-interrogatorio" class="form-label">Resumen del Interrogatorio:</label>
+                <textarea class="form-control" id="resumeninterrogatorio" name="resumeninterrogatorio"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="resultados-relevantes-urgencias" class="form-label">Resultados Relevantes de Estudios:</label>
+                <textarea class="form-control" id="resultadosrelevantesurgencias" name="resultadosrelevantesurgencias"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="diagnosticos-urgencias" class="form-label">Diagnósticos o Problemas Clínicos:</label>
+                <textarea class="form-control" id="diagnosticosurgencias" name="diagnosticosurgencias"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="tratamiento-pronostico" class="form-label">Tratamiento y Pronóstico:</label>
+                <textarea class="form-control" id="tratamientopronostico" name="tratamientopronostico"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Guardar Expediente</button>
+        </form>
+    </div>
+    <div class="d-flex justify-content-right">
+        <a href="#" class="btn btn-outline-success" style="margin-left: 20px;">Subir</a>
+
+      </div>
+      
+    <footer></footer>
+    <script type="module" src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script>
+    <script type="module">
+        // Your web app's Firebase configuration
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getFirestore, collection, addDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+        const firebaseConfig = {
+  apiKey: "AIzaSyC5FtYUL8Br1yyzjPVob_f5NxH8RGJHQYU",
+  authDomain: "expediente-1ed23.firebaseapp.com",
+  projectId: "expediente-1ed23",
+  storageBucket: "expediente-1ed23.appspot.com",
+  messagingSenderId: "281693892079",
+  appId: "1:281693892079:web:ce51c550f275e7ff219a1a"
+};
+
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const expedienteForm = document.getElementById('expedienteform');
+
+            expedienteForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const formData = new FormData(expedienteForm);
+                const data = {};
+                formData.forEach((value, key) => (data[key] = value));
+
+                try {
+                    
+                    await addDoc(collection(db, 'expediente'), data);
+                    Swal.fire('Expediente guardado con éxito', '', 'success');
+                    expedienteForm.reset();
+                } catch (error) {
+                    console.error('Error guardando el expediente: ', error);
+                    Swal.fire('Hubo un error guardando el expediente', '', 'error');
+                }
+            });
+        });
+    </script>
+    <script type="module">
+        import { ManageAccount } from '/js/firebaseconect.js';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const manageAccount = new ManageAccount();
+            const logoutButton = document.getElementById('logoutButton');
+
+            logoutButton.addEventListener('click', () => {
+                manageAccount.signOut();
+            });
+        });
+    </script>
+    <script src="/js/scripts.js"></script>
+    
+</body>

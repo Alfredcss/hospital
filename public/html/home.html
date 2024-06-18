@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coscami</title>
+    <link rel="shortcut icon" href="/img/logo2.png" type="image/x-icon">
+    <link rel="stylesheet" href="/css/home.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <script type="module">
+        import { getLastAddedPatient } from '/js/firebaseconect.js';
+        import { auth } from '/js/firebaseconect.js'; // Import auth here
+    
+        document.addEventListener("DOMContentLoaded", async function() {
+            const patient = await getLastAddedPatient();
+            if (patient) {
+                const latestActivityList = document.querySelector('.list-group');
+                const newListItem = document.createElement('li');
+                newListItem.classList.add('list-group-item');
+                newListItem.textContent = `Nuevo paciente agregado: ${paciente.nombre} ${paciente.apellidos}`;
+                latestActivityList.appendChild(newListItem);
+            }
+        });
+    
+        // Authentication check
+        auth.onAuthStateChanged(user => {
+            if (!user && window.location.pathname !== '/html/index.html') {
+                window.location.href = "/html/index.html";
+            }
+        });
+    </script>
+    
+</head>
+<body>
+    <header></header>
+    
+    <main class="container">
+        <div class="text-center mb-4">
+            <h1 class="display-4">Bienvenido al Expediente Clínico del Hospital Centro Medico Coscami</h1>
+            <p class="lead">Utiliza esta plataforma para gestionar y acceder a los expedientes clínicos de los pacientes de manera eficiente.</p>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-6 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Accesos Rápidos</h5>
+                        <button class="btn btn-primary me-2" onclick="location.href='verpacientes.html'">Ver Pacientes</button>
+                        <button class="btn btn-success" onclick="location.href='agregarpaciente.html'">Agregar Paciente</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Estadísticas</h5>
+                        <p>Total de Pacientes Registrados: <span id="totalPacientes"></span></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Próximas Citas</h5>
+                        <ul class="list-group">
+                            <li class="list-group-item">Paciente: Juan Pérez - 10:00 AM</li>
+                            <li class="list-group-item">Paciente: María López - 11:00 AM</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Últimas Actividades</h5>
+                        <ul class="list-group">
+                            <!-- Aquí se agregará el último paciente dinámicamente -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Noticias y Actualizaciones</h5>
+                        <p class="card-text">Actualización del sistema programada para el 15 de junio.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer></footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="module" src="/js/firebaseconect.js"></script>
+    <script type="module">
+        import { ManageAccount } from '/js/firebaseconect.js';
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const manageAccount = new ManageAccount();
+            const logoutButton = document.getElementById('logoutButton');
+            
+            if (logoutButton) {
+                logoutButton.addEventListener('click', () => {
+                    manageAccount.signOut();
+                });
+            }
+        });
+    </script>
+
+    <script src="/js/scripts.js"></script>
+</body>
+</html>
