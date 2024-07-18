@@ -1,6 +1,8 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getDatabase, ref, query, orderByChild, limitToLast, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import { getAuth, signInWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getDatabase } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import { getFirestore, doc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
 const firebaseConfig = {
   apiKey: "AIzaSyC5FtYUL8Br1yyzjPVob_f5NxH8RGJHQYU",
   authDomain: "expediente-1ed23.firebaseapp.com",
@@ -10,11 +12,37 @@ const firebaseConfig = {
   appId: "1:281693892079:web:ce51c550f275e7ff219a1a"
 };
 
+// Inicializa la app de Firebase y obtén la instancia de Firestore
 const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 const auth = getAuth(app);
 export { auth };
 const database = getDatabase(app);
+
+// Inicializa el proveedor de Google
+const provider = new GoogleAuthProvider();
+
+export { provider };
+
+// Función para obtener un paciente por su ID
+export async function getPacienteById(id) {
+  const docRef = doc(db, 'expediente', id);
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    return docSnap.data();
+  } else {
+    console.log('No se encontró el documento');
+    return null;
+  }
+}
+
+// Función para actualizar un paciente en Firestore
+export async function updatePaciente(id, updatedData) {
+  const docRef = doc(db, 'expediente', id);
+  await updateDoc(docRef, updatedData);
+}
 
 auth.onAuthStateChanged(function(user) {
   if (!user && window.location.pathname !== '/html/index.html') {
@@ -59,6 +87,29 @@ export class ManageAccount {
       });
   }
 
+  signInWithGoogle() {
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        Swal.fire({
+          title: 'Inicio de sesión exitoso',
+          text: 'Has iniciado sesión con Google correctamente. Serás redirigido a la página principal.',
+          icon: 'success',
+          confirmButtonText: 'Aceptar'
+        }).then(() => {
+          window.location.href = "/html/home.html";
+        });
+      })
+      .catch((error) => {
+        console.error(error.message);
+        Swal.fire({
+          title: 'Error al iniciar sesión con Google',
+          text: `Error: ${error.message}`,
+          icon: 'error',
+          confirmButtonText: 'Aceptar'
+        });
+      });
+  }
+
   signOut() {
     Swal.fire({
       title: '¿Estás seguro de que deseas cerrar sesión?',
@@ -84,13 +135,4 @@ export class ManageAccount {
       }
     });
   }
-}
-
-// Función para obtener el último paciente agregado
-export async function getLastAddedPatient() {
-  const patientsRef = ref(database, 'expediente');
-  const latestPatientQuery = query(patientsRef, orderByChild('createdAt'), limitToLast(1));
-  const snapshot = await get(latestPatientQuery);
-  const latestPatient = snapshot.val();
-  return latestPatient ? Object.values(latestPatient)[0] : null;
 }

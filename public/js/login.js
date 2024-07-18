@@ -1,4 +1,4 @@
-import { ManageAccount } from './firebaseconect.js';
+import { ManageAccount, auth } from './firebaseconect.js';
 
 document.addEventListener("DOMContentLoaded", function() {
     document.getElementById("login-form").addEventListener("submit", function(event) {
@@ -24,6 +24,24 @@ document.addEventListener("DOMContentLoaded", function() {
             });
     });
 
+    document.getElementById("google-login").addEventListener("click", function() {
+        const account = new ManageAccount();
+        account.signInWithGoogle()
+            .then(result => {
+                // Redireccionar al usuario después de la autenticación exitosa
+                window.location.href = "/html/home.html";
+            })
+            .catch(error => {
+                // Manejar errores de autenticación
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error de autenticación',
+                    text: error.message
+                });
+                console.error("Error de autenticación:", error);
+            });
+    });
+
     // Toggle password visibility
     const togglePassword = document.getElementById('toggle-password');
     const passwordField = document.getElementById('password');
@@ -33,14 +51,12 @@ document.addEventListener("DOMContentLoaded", function() {
         this.classList.toggle('fa-eye');
         this.classList.toggle('fa-eye-slash');
     });
-});
 
-// Check authentication status and redirect
-// Suponiendo que estás utilizando Firebase Authentication para autenticación
-firebase.auth().onAuthStateChanged(function(user) {
-    if (!user) {
-        // Usuario no autenticado, redirigir a la página de inicio de sesión
-        window.location.href = "./index.html";
-    }
+    // Check authentication status and redirect
+    auth.onAuthStateChanged(function(user) {
+        if (!user) {
+            // Usuario no autenticado, redirigir a la página de inicio de sesión
+            window.location.href = "./index.html";
+        }
+    });
 });
-

@@ -1,210 +1,76 @@
-<!--<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="styles.css">  Vincula tu archivo CSS aquí 
-  <title>Pacientes</title>
+  <title>Prueba de autenticacion firebase para google (sdk de Javascript)</title>
+  <script type="module" src="/js/firebaseconect.js"></script>
+  <style>
+    #datosuser{
+      font-size: .8em;
+    }
+  </style>
 </head>
 <body>
-  <div id="pacientes-list" class="container"></div>
-  <script src="path_to_your_js_file.js"></script>
+  <button id="botonlogin">Haz login con Google</button>  
+  <button id="botonlogout">Haz logout</button>  
+  <p id="datosuser"></p>
+<script src="https://www.gstatic.com/firebasejs/3.5.2/firebase.js"></script>
+<script>
+  // inicializar Firebase
+  var config = {
+    apiKey: "AIzaSyC5FtYUL8Br1yyzjPVob_f5NxH8RGJHQYU",
+  authDomain: "expediente-1ed23.firebaseapp.com",
+  projectId: "expediente-1ed23",
+  storageBucket: "expediente-1ed23.appspot.com",
+  messagingSenderId: "281693892079",
+  appId: "1:281693892079:web:ce51c550f275e7ff219a1a"
+  };
+  firebase.initializeApp(config);
+</script>
+
+
+<script>
+// accedo al servicio de autenticación
+var authService = firebase.auth();
+
+
+// manejador de eventos para loguearse
+document.getElementById('botonlogin').addEventListener('click', function() {
+  var provider = new firebase.auth.GoogleAuthProvider();
+  provider.addScope('email');
+  authService.signInWithPopup(provider)
+        .then(function(result) {
+            // logueado con éxito
+            console.log('Hemos autenticado al usuario ', result.user);
+        })
+        .catch(function(error) {
+            // Fallo de login
+            console.log('Se ha encontrado un error:', error);
+        });
+})
+
+
+//manejador de eventos para cerrar sesión (logout)
+document.getElementById('botonlogout').addEventListener('click', function() {
+  authService.signOut()
+})
+
+
+// manejador de eventos para los cambios del estado de autenticación
+authService.onAuthStateChanged(function(user) {
+  if (user) {
+    console.log('AuthStateChanged', user)
+    document.getElementById('datosuser').innerHTML = JSON.stringify(user);
+    document.getElementById('botonlogin').style.display = 'none';
+    document.getElementById('botonlogout').style.display = 'block';
+  } else {
+    document.getElementById('datosuser').innerHTML = 'Sin usuario logueado...'
+    document.getElementById('botonlogin').style.display = 'block';
+    document.getElementById('botonlogout').style.display = 'none';
+  }
+});
+</script>
+
+
 </body>
 </html>
--->
-
-/* Estilos globales 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-family: Arial, sans-serif;
-  background-color: #f0f0f0;
-  padding: 20px;
-}
-
- Contenedor 
-.container {
-  width: 100%;
-  max-width: 1100px;
-}
-
- Tarjeta 
-.card {
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  margin: 20px;
-  overflow: hidden;
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-}
-
- Encabezado de la tarjeta 
-.card-header {
-  background-color: #007bff;
-  color: white;
-  padding: 15px;
-  text-align: center;
-}
-
-.card-header .btn-link {
-  color: #fff;
-  text-decoration: underline;
-  cursor: pointer;
-}
-
-.card-header .btn-link:hover {
-  text-decoration: none;
-}
-
- Cuerpo de la tarjeta 
-.card-body {
-  padding: 15px;
-}
-
- Pie de la tarjeta 
-.card-footer {
-  background-color: #f7f7f7;
-  padding: 10px;
-  text-align: center;
-}
-
-.card-footer .btn {
-  margin: 5px;
-}
-
- Clase para ocultar contenido 
-.d-none {
-  display: none;
-}
-*/
-
-const mostrarPacientes = (pacientes) => {
-  const pacientesListElement = document.getElementById('pacientes-list');
-  pacientesListElement.innerHTML = ''; // Limpiar la lista antes de agregar pacientes nuevos
-
-  const rowWrapper = document.createElement('div');
-  rowWrapper.classList.add('row', 'row-cols-1', 'row-cols-md-2', 'g-4');
-
-  pacientes.forEach(paciente => {
-    const column = document.createElement('div');
-    column.classList.add('col', 'mb-4');
-
-    const card = document.createElement('div');
-    card.classList.add('card');
-
-    const cardHeader = document.createElement('div');
-    cardHeader.classList.add('card-header');
-    cardHeader.innerHTML = `
-      <h5 class="card-title mb-0">${paciente.nombre} ${paciente.apellidos}</h5>
-      <p class="card-text mb-0"><strong>Edad:</strong> ${paciente.edad}</p>
-      <p class="card-text mb-0"><strong>Fecha de nacimiento:</strong> ${paciente.fechaNacimiento}</p>
-      <p class="card-text mb-0"><strong>Género:</strong> ${paciente.genero}</p>
-      <p class="card-text mb-0"><strong>Dirección:</strong> ${paciente.direccion}</p>
-      <p class="card-text mb-0"><strong>Teléfono:</strong> ${paciente.telefono}</p>
-      <p class="card-text mb-0"><strong>Grupo Étnico:</strong> ${paciente.grupoetnico}</p>
-      <p class="card-text"><strong>ID:</strong> <span class="badge bg-secondary rounded-pill">${paciente.id}</span></p>
-      <button class="btn btn-link btn-sm" type="button">Ver detalles</button>
-    `;
-
-    const cardBody = document.createElement('div');
-    cardBody.classList.add('card-body', 'd-none'); // Initially hidden
-
-    const leftColumn = document.createElement('div');
-    leftColumn.classList.add('col-md-6');
-    leftColumn.innerHTML = `
-      <h4>Historia Clínica</h4>
-      <h6><strong>Antecedentes Heredo Familiares</strong></h6>
-      <p>${paciente.antecedentesheredofamiliares}</p>
-      <h6>Antecedentes Personales:</h6>
-      <p>${paciente.antecedentespersonales}</p>
-      <h6>Padecimiento Actual:</h6>
-      <p>${paciente.padecimientoactual}</p>
-      <h6>Interrogatorio por Aparatos y Sistemas:</h6>
-      <p>${paciente.interrogatorioaparatos}</p>
-      <h4>Exploración Física:</h4>
-      <p><strong>Habitus Exterior:</strong> ${paciente.habitus}</p>
-      <p><strong>Signos Vitales:</strong> ${paciente.signosvitales}</p>
-      <p><strong>Peso:</strong> ${paciente.peso}</p>
-      <p><strong>Talla:</strong> ${paciente.talla}</p>
-      <p><strong>Datos de Cabeza:</strong> ${paciente.datoscabeza}</p>
-      <p><strong>Datos de Cuello:</strong> ${paciente.datoscuello}</p>
-      <p><strong>Datos de Tórax:</strong> ${paciente.datostorax}</p>
-      <p><strong>Datos de Abdomen:</strong> ${paciente.datosabdomen}</p>
-      <p><strong>Datos de Miembros:</strong> ${paciente.datosmiembros}</p>
-      <p><strong>Datos de Genitales:</strong> ${paciente.datosgenitales}</p>
-    `;
-
-    const rightColumn = document.createElement('div');
-    rightColumn.classList.add('col-md-6');
-    rightColumn.innerHTML = `
-      <h4>Estudios y Diagnóstico:</h4>
-      <p><strong>Resultados de Estudios de Laboratorio y Gabinete:</strong> ${paciente.resultadosestudios}</p>
-      <p><strong>Diagnósticos o Problemas Clínicos:</strong> ${paciente.diagnosticos}</p>
-      <p><strong>Pronóstico:</strong> ${paciente.pronostico}</p>
-      <p><strong>Indicación Terapéutica:</strong> ${paciente.indicacionterapeutica}</p>
-      <h4>Nota de Interconsulta:</h4>
-      <p><strong>Evolución y Actualización del Cuadro Clínico:</strong> ${paciente.evolucion}</p>
-      <p><strong>Signos Vitales:</strong> ${paciente.signosvitalesevolucion}</p>
-      <p><strong>Resultados Relevantes de Estudios:</strong> ${paciente.resultadosrelevantes}</p>
-      <p><strong>Diagnósticos o Problemas Clínicos:</strong> ${paciente.diagnosticosevolucion}</p>
-      <p><strong>Pronóstico:</strong> ${paciente.pronosticoevolucion}</p>
-      <p><strong>Tratamiento e Indicaciones Médicas:</strong> ${paciente.tratamientoindicaciones}</p>
-      <p><strong>Criterios Diagnósticos:</strong> ${paciente.criteriosdiagnosticos}</p>
-      <p><strong>Plan de Estudios:</strong> ${paciente.planestudios}</p>
-      <p><strong>Sugerencias Diagnósticas y Tratamiento:</strong> ${paciente.sugerenciasdiagnosticas}</p>
-      <h4>Nota de Referencia/Traslado:</h4>
-      <p><strong>Establecimiento que Envía:</strong> ${paciente.establecimientoenvia}</p>
-      <p><strong>Establecimiento Receptor:</strong> ${paciente.establecimientoreceptor}</p>
-      <p><strong>Motivo de Envío:</strong> ${paciente.motivoenvio}</p>
-      <p><strong>Impresión Diagnóstica:</strong> ${paciente.impresiondiagnostica}</p>
-      <p><strong>Terapéutica Empleada:</strong> ${paciente.terapeuticaempleada}</p>
-      
-      <h4>Nota Médica en Urgencias:</h4>
-      <p><strong>Fecha y Hora de Atención:</strong> ${paciente.fechahoraatencion}</p>
-      <p><strong>Signos Vitales:</strong> ${paciente.signosvitalesurgencias}</p>
-      <p><strong>Motivo de la Atención:</strong> ${paciente.motivoatencion}</p>
-      <p><strong>Resumen del Interrogatorio:</strong> ${paciente.resumeninterrogatorio}</p>
-      <p><strong>Resultados Relevantes de Estudios:</strong> ${paciente.resultadosrelevantesurgencias}</p>
-      <p><strong>Diagnósticos o Problemas Clínicos:</strong> ${paciente.diagnosticosurgencias}</p>
-      <p><strong>Tratamiento y Pronóstico:</strong> ${paciente.tratamientopronostico}</p>
-    `;
-
-    const row = document.createElement('div');
-    row.classList.add('row');
-    row.appendChild(leftColumn);
-    row.appendChild(rightColumn);
-    cardBody.appendChild(row);
-
-    const cardFooter = document.createElement('div');
-    cardFooter.classList.add('card-footer', 'text-center');
-    cardFooter.innerHTML = `
-      <button class="btn btn-danger btn-sm mx-1" data-paciente-id="${paciente.id}">Eliminar</button>
-      <button class="btn btn-primary btn-sm mx-1" data-paciente-id="${paciente.id}">Actualizar</button>
-    `;
-
-    card.appendChild(cardHeader);
-    card.appendChild(cardBody);
-    card.appendChild(cardFooter);
-    column.appendChild(card);
-    rowWrapper.appendChild(column);
-
-    // Add event listener to "Ver detalles" button
-    cardHeader.querySelector('button').addEventListener('click', () => {
-      cardBody.classList.toggle('d-none');
-    });
-  });
-
-  pacientesListElement.appendChild(rowWrapper);
-};

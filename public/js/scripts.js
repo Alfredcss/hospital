@@ -2,78 +2,110 @@ const header = document.querySelector("header");
 const footer = document.querySelector("footer");
 
 header.innerHTML = `
-<style>
+ <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
 
-  
-  /* Estilos para el botón de cerrar sesión */
-  #logoutButton {
-    background-color: red;
-    border: none;
-    cursor: pointer;
-    outline: none;
-    font-size: 14px;
-    padding: 5px 10px;
-    border-radius: 5px;
-    position: fixed; 
-    top:0;
+    header {
+      background-color: #F1F2F2;
+      color: black;
+      padding: 10px 0;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .navbar-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .logo img {
+      width: 150px;
+      height: auto;
+    }
+
+    #nav {
+      display: flex;
+      gap: 20px;
+    }
+
+    #nav a {
+      color: black;
+      text-decoration: none;
+      font-size: 20px;
+      position: relative;
+      padding: 5px 0;
+      transition: color 0.3s ease;
+      display: flex;
+      align-items: center;
+    }
+
+    #nav a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      left: 50%;
+      bottom: 0;
+      background-color: #33CEFF;
+      transition: width 0.3s ease, left 0.3s ease;
+    }
+
+    #nav a:hover::after {
+      width: 100%;
+      left: 0;
+    }
+
+    #logoutButton {
+      background-color: #FF6B6B;
+      border: none;
+      cursor: pointer;
+      outline: none;
+      font-size: 16px;
+      padding: 5px 10px;
+      border-radius: 5px;
+      color: white;
+      transition: background-color 0.3s ease;
+    }
+
+    #logoutButton:hover {
+      background-color: #FF4C4C;
+    }
+
+    /* Estilos para los iconos */
+    .nav-icon {
+      margin-right: 5px;
+    }
+
     
-  }
+  </style>
 
-  /* Estilos para los enlaces del menú de navegación */
-  #nav a {
-    margin: 0 10px;
-    text-decoration: none;
-    color: #333;
-    position: relative;
-    transition: color 0.3s ease;
-    font-family: 'Roboto', sans-serif;
-
-  }
-
-  /* Animación al pasar el cursor sobre los enlaces */
-  #nav a::before {
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 2px;
-    bottom: 0;
-    left: 0;
-    background-color: #33CEFF;
-    visibility: hidden;
-    transform: scaleX(0);
-    transition: all 0.3s ease-in-out;
-  }
-
-  #nav a:hover::before {
-    visibility: visible;
-    transform: scaleX(1);
-  }
-
-  
-</style>
-
-<div class="d-flex align-items-center justify-content-between"> <!-- Contenedor principal -->
-  <div class="logo"> <!-- Logo -->
-    <a href="home.html">
-      <img src="/img/logo.png" alt="Centro Medico Coscami" width="150" height="40">
-    </a>
-  </div>
-  <div id="nav"> <!-- Menú de navegación -->
-    <a href="home.html">Home</a>
-    <a href="verpacientes.html">Ver pacientes</a>
-    <a href="agregarpaciente.html">Agregar Pacientes</a>
-    <a  id="logoutButton">Cerrar Sesión</a>
-    <button type="button"  id="logoutButton"> Cerrar Sesión
-    </button>
-  </div>
-</div>
+<div class="navbar-container">
+      <div class="logo">
+        <a href="home.html">
+          <img src="/img/logo.png" alt="Centro Medico Coscami">
+        </a>
+      </div>
+      <div id="nav">
+        <a href="home.html"><i class="nav-icon fas fa-home"></i> Home</a>
+        <a href="verpacientes.html"><i class="nav-icon fas fa-list-alt"></i> Ver pacientes</a>
+        <a href="agregarpaciente.html"><i class="nav-icon fas fa-user-plus"></i> Agregar Pacientes</a>
+        <button type="button" id="logoutButton"><i class="nav-icon fas fa-sign-out-alt"></i> Cerrar Sesión</button>
+        
+      </div>
+    </div>
 `;
 
 footer.innerHTML = `
 <footer class="footer mt-auto py-3 bg-light">
-<div class="container">
-    <span class="text-muted">Centro Medico Coscami © 2024</span>
-</div>
-</footer>
-
+    <div class="container">
+      <span class="text-muted">Centro Medico Coscami © 2024</span>
+    </div>
+  </footer>
 `;

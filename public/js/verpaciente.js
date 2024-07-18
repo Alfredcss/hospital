@@ -1,5 +1,5 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-import { getFirestore, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { getFirestore, collection, getDocs, doc, deleteDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
 // Configuración de Firebase
 const firebaseConfig = {
@@ -20,13 +20,41 @@ const getPacientes = async () => {
   try {
     const pacientesCollection = collection(db, 'expediente');
     const pacientesSnapshot = await getDocs(pacientesCollection);
-    console.log('Snapshot:', pacientesSnapshot); // Verifica si obtienes el snapshot
     const pacientesData = pacientesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    console.log('Pacientes:', pacientesData); // Verifica los datos obtenidos
     return pacientesData;
   } catch (error) {
     console.error('Error obteniendo los pacientes:', error);
   }
+};
+
+// Función para eliminar un expediente
+const deletePaciente = async (id) => {
+  try {
+    const pacienteDoc = doc(db, 'expediente', id);
+    await deleteDoc(pacienteDoc);
+    console.log('Paciente eliminado con éxito:', id);
+  } catch (error) {
+    console.error('Error eliminando el paciente:', error);
+  }
+};
+
+// Función para mostrar la alerta de confirmación
+const mostrarAlertaEliminar = (pacienteId, pacientes) => {
+  $('#confirmModal').modal('show');
+
+  const confirmButton = document.getElementById('confirmDeleteButton');
+  confirmButton.onclick = async () => {
+    try {
+      await deletePaciente(pacienteId);
+      const updatedPacientes = await getPacientes();
+      mostrarPacientes(updatedPacientes);
+      $('#confirmModal').modal('hide');
+      alert('Paciente eliminado con éxito.');
+    } catch (error) {
+      console.error('Error eliminando paciente:', error);
+      alert('Hubo un problema al eliminar el paciente.');
+    }
+  };
 };
 
 const mostrarPacientes = (pacientes) => {
@@ -40,45 +68,64 @@ const mostrarPacientes = (pacientes) => {
     const column = document.createElement('div');
     column.classList.add('col', 'mb-4');
 
-    const card = document.createElement('div');
-    card.classList.add('card');
+    const notification = document.createElement('div');
+    notification.classList.add('notification');
 
-    const cardHeader = document.createElement('div');
-    cardHeader.classList.add('card-header');
-    cardHeader.innerHTML = `
-   
-      <h5  style="color: #007bff;" class="card-title mb-0">${paciente.nombre} ${paciente.apellidos}</h5>
-      <p class="card-text mb-0"><strong>Edad:</strong> ${paciente.edad}</p>
-      <p class="card-text mb-0"><strong>Fecha de nacimiento:</strong> ${paciente.fechaNacimiento}</p>
-      <p class="card-text mb-0"><strong>Género:</strong> ${paciente.genero}</p>
-      <p class="card-text mb-0"><strong>Dirección:</strong> ${paciente.direccion}</p>
-      <p class="card-text mb-0"><strong>Teléfono:</strong> ${paciente.telefono}</p>
-      <p class="card-text mb-0"><strong>Grupo Étnico:</strong> ${paciente.grupoetnico}</p>
-      <p class="card-text"><strong>ID:</strong> <span class="badge bg-secondary rounded-pill">${paciente.id}</span></p>
-      <button class="btn btn-link btn-sm ver-detalles" type="button" data-toggle="modal" data-target="#detallesModal" data-id="${paciente.id}">Ver detalles</button>
+    const notiTitle = document.createElement('div');
+    notiTitle.classList.add('notititle');
+    notiTitle.innerHTML = `${paciente.nombre} ${paciente.apellidos}`;
+
+    const notiBody = document.createElement('div');
+    notiBody.classList.add('notibody');
+    notiBody.innerHTML = `
+      <p><strong>Edad:</strong> ${paciente.edad}</p>
+      <p><strong>Fecha de nacimiento:</strong> ${paciente.fechaNacimiento}</p>
+      <p><strong>Género:</strong> ${paciente.genero}</p>
+      <p><strong>Dirección:</strong> ${paciente.direccion}</p>
+      <p><strong>Teléfono:</strong> ${paciente.telefono}</p>
+      <p><strong>Grupo Étnico:</strong> ${paciente.grupoetnico}</p>
+      <p><strong>ID:</strong> <span class="badge bg-secondary rounded-pill">${paciente.id}</span></p>
+      <button class="btn btn-link btn-sm ver-detalles-btn" type="button" data-paciente-id="${paciente.id}">Ver detalles</button>
     `;
 
-    const cardFooter = document.createElement('div');
-    cardFooter.classList.add('card-footer', 'text-center');
-    cardFooter.innerHTML = `
-      <button class="btn btn-danger btn-sm mx-1" data-paciente-id="${paciente.id}">Eliminar</button>
-      <button class="btn btn-primary btn-sm mx-1" data-paciente-id="${paciente.id}">Actualizar</button>
+    const notiFooter = document.createElement('div');
+    notiFooter.classList.add('notifooter'); // Usando una nueva clase para el pie de tarjeta
+    notiFooter.innerHTML = `
+      <button class="btn btn-outline-danger btn-sm mx-1 eliminar-btn" data-paciente-id="${paciente.id}">Eliminar</button>
+      <button class="btn btn-outline-primary btn-sm mx-1 editar-btn" data-paciente-id="${paciente.id}">Actualizar</button>
     `;
 
-    card.appendChild(cardHeader);
-    card.appendChild(cardFooter);
-    column.appendChild(card);
+    notification.appendChild(notiTitle);
+    notification.appendChild(notiBody);
+    notification.appendChild(notiFooter);
+    column.appendChild(notification);
     rowWrapper.appendChild(column);
   });
 
   pacientesListElement.appendChild(rowWrapper);
 
-  // Add event listeners for "Ver detalles" buttons
-  document.querySelectorAll('.ver-detalles').forEach(button => {
+  // Agregar event listener a los botones de eliminar
+  document.querySelectorAll('.eliminar-btn').forEach(button => {
     button.addEventListener('click', (event) => {
-      const pacienteId = event.target.getAttribute('data-id');
+      const pacienteId = event.target.getAttribute('data-paciente-id');
+      mostrarAlertaEliminar(pacienteId, pacientes);
+    });
+  });
+
+  // Agregar event listener a los botones de ver detalles
+  document.querySelectorAll('.ver-detalles-btn').forEach(button => {
+    button.addEventListener('click', (event) => {
+      const pacienteId = event.target.getAttribute('data-paciente-id');
       const paciente = pacientes.find(p => p.id === pacienteId);
       mostrarDetallesPaciente(paciente);
+    });
+  });
+
+  // Agregar event listener a los botones de actualizar
+  document.querySelectorAll('.editar-btn').forEach(button => {
+    button.addEventListener('click', (event) => {
+      const pacienteId = event.target.getAttribute('data-paciente-id');
+      window.location.href = `editarpaciente.html?id=${pacienteId}`;
     });
   });
 };
@@ -86,60 +133,113 @@ const mostrarPacientes = (pacientes) => {
 const mostrarDetallesPaciente = (paciente) => {
   const modalBodyContent = document.getElementById('modal-body-content');
   modalBodyContent.innerHTML = `
+  
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-6">
 
-    <h4 style="color: #007bff;">Historia Clínica</h4>
-    <h6><strong>Antecedentes Heredo Familiares</strong></h6>
-    <p>${paciente.antecedentesheredofamiliares}</p>
-    <h6>Antecedentes Personales:</h6>
-    <p>${paciente.antecedentespersonales}</p>
-    <h6>Padecimiento Actual:</h6>
-    <p>${paciente.padecimientoactual}</p>
-    <h6>Interrogatorio por Aparatos y Sistemas:</h6>
-    <p>${paciente.interrogatorioaparatos}</p>
-    <h4>Exploración Física:</h4>
-    <p><strong>Habitus Exterior:</strong> ${paciente.habitus}</p>
-    <p><strong>Signos Vitales:</strong> ${paciente.signosvitales}</p>
-    <p><strong>Peso:</strong> ${paciente.peso}</p>
-    <p><strong>Talla:</strong> ${paciente.talla}</p>
-    <p><strong>Datos de Cabeza:</strong> ${paciente.datoscabeza}</p>
-    <p><strong>Datos de Cuello:</strong> ${paciente.datoscuello}</p>
-    <p><strong>Datos de Tórax:</strong> ${paciente.datostorax}</p>
-    <p><strong>Datos de Abdomen:</strong> ${paciente.datosabdomen}</p>
-    <p><strong>Datos de Miembros:</strong> ${paciente.datosmiembros}</p>
-    <p><strong>Datos de Genitales:</strong> ${paciente.datosgenitales}</p>
+      <p class="font-weight-bold text-dark">
+    <span class="bg-info text-dark px-1 rounded-pill">
+        ${paciente.nombre} ${paciente.apellidos}
+    </span>
+</p>
+          <div class="section-title">Historia Clínica</div>
+          <div class="section-content">
+            <div class="mb-3">
+              <h6><strong>Antecedentes Heredo Familiares</strong></h6>
+              
+              <p>${paciente.antecedentesheredofamiliares}</p>
+            </div>
+            <div class="mb-3">
+              <h6><strong>Antecedentes Personales:</strong></h6>
+              <p>${paciente.antecedentespersonales}</p>
+            </div>
+            <div class="mb-3">
+              <h6><strong>Padecimiento Actual:</strong></h6>
+              <p>${paciente.padecimientoactual}</p>
+            </div>
+            <div class="mb-3">
+              <h6><strong>Interrogatorio por Aparatos y Sistemas:</strong></h6>
+              <p>${paciente.interrogatorioaparatos}</p>
+            </div>
+          </div>
+          <div class="section-title">Exploración Física</div>
+<div class="section-content">
+    <div class="row">
+        <div class="col-md-6">
+            <p><strong>Habitus Exterior:</strong> ${paciente.habitus}</p>
+            <p><strong>Peso:</strong> ${paciente.peso}</p>
+            <p><strong>Talla:</strong> ${paciente.talla}</p>
+        </div>
+        <div class="col-md-6">
+            <p><strong>FC:</strong> ${paciente.FC}</p>
+            <p><strong>TA:</strong> ${paciente.TA}</p>
+            <p><strong>FR:</strong> ${paciente.FR}</p>
+            <p><strong>T:</strong> ${paciente.T}</p>
+        </div>
+        <div class="section-content">
+    <ul>
+        <li><strong>Datos de Cabeza:</strong>${paciente.datoscabeza}</li>
+        <li><strong>Datos de Cuello:</strong>${paciente.datoscuello}</li>
+        <li><strong>Datos de Tórax:</strong>${paciente.datostorax}</li>
+        <li><strong>Datos de Abdomen:</strong>${paciente.datosabdomen}</li>
+        <li><strong>Datos de Miembros:</strong>${paciente.datosmiembros}</li>
+        <li><strong>Datos de Genitales:</strong>${paciente.datosgenitales}</li>
+    </ul>
+</div>
+    </div>
+</div>
 
-    <h4>Estudios y Diagnóstico:</h4>
-    <p><strong>Resultados de Estudios de Laboratorio y Gabinete:</strong> ${paciente.resultadosestudios}</p>
-    <p><strong>Diagnósticos o Problemas Clínicos:</strong> ${paciente.diagnosticos}</p>
-    <p><strong>Pronóstico:</strong> ${paciente.pronostico}</p>
-    <p><strong>Indicación Terapéutica:</strong> ${paciente.indicacionterapeutica}</p>
-    <h4>Nota de Interconsulta:</h4>
-    <p><strong>Evolución y Actualización del Cuadro Clínico:</strong> ${paciente.evolucion}</p>
-    <p><strong>Signos Vitales:</strong> ${paciente.signosvitalesevolucion}</p>
-    <p><strong>Resultados Relevantes de Estudios:</strong> ${paciente.resultadosrelevantes}</p>
-    <p><strong>Diagnósticos o Problemas Clínicos:</strong> ${paciente.diagnosticosevolucion}</p>
-    <p><strong>Pronóstico:</strong> ${paciente.pronosticoevolucion}</p>
-    <p><strong>Tratamiento e Indicaciones Médicas:</strong> ${paciente.tratamientoindicaciones}</p>
-    <p><strong>Criterios Diagnósticos:</strong> ${paciente.criteriosdiagnosticos}</p>
-    <p><strong>Plan de Estudios:</strong> ${paciente.planestudios}</p>
-    <p><strong>Sugerencias Diagnósticas y Tratamiento:</strong> ${paciente.sugerenciasdiagnosticas}</p>
-    <h4>Nota de Referencia/Traslado:</h4>
-    <p><strong>Establecimiento que Envía:</strong> ${paciente.establecimientoenvia}</p>
-    <p><strong>Establecimiento Receptor:</strong> ${paciente.establecimientoreceptor}</p>
-    <p><strong>Motivo de Envío:</strong> ${paciente.motivoenvio}</p>
-    <p><strong>Impresión Diagnóstica:</strong> ${paciente.impresiondiagnostica}</p>
-    <p><strong>Terapéutica Empleada:</strong> ${paciente.terapeuticaempleada}</p>
-
-    <h4>Nota Médica en Urgencias:</h4>
-    <p><strong>Fecha y Hora de Atención:</strong> ${paciente.fechahoraatencion}</p>
-    <p><strong>Signos Vitales:</strong> ${paciente.signosvitalesurgencias}</p>
-    <p><strong>Motivo de la Atención:</strong> ${paciente.motivoatencion}</p>
-    <p><strong>Resumen del Interrogatorio:</strong> ${paciente.resumeninterrogatorio}</p>
-    <p><strong>Resultados Relevantes de Estudios:</strong> ${paciente.resultadosrelevantesurgencias}</p>
-    <p><strong>Diagnósticos o Problemas Clínicos:</strong> ${paciente.diagnosticosurgencias}</p>
-    <p><strong>Tratamiento y Pronóstico:</strong> ${paciente.tratamientopronostico}</p>
+        </div>
+        <div class="col-md-6">
+          <div class="section-title">Estudios y Diagnóstico</div>
+          <div class="section-content">
+            <div class="mb-3">
+              <p><strong>Resultados de Estudios de Laboratorio y Gabinete:</strong> ${paciente.resultadosestudios}</p>
+              <p><strong>Diagnósticos o Problemas Clínicos:</strong> ${paciente.diagnosticos}</p>
+              <p><strong>Pronóstico:</strong> ${paciente.pronostico}</p>
+              <p><strong>Indicación Terapéutica:</strong> ${paciente.indicacionterapeutica}</p>
+            </div>
+          </div>
+          <div class="section-title">Nota de Interconsulta</div>
+          <div class="section-content">
+            <div class="mb-3">
+              <p><strong>Evolución y Actualización del Cuadro Clínico:</strong> ${paciente.evolucion}</p>
+              <p><strong>Signos Vitales:</strong> ${paciente.signosvitalesevolucion}</p>
+              <p><strong>Resultados Relevantes de Estudios:</strong> ${paciente.resultadosrelevantes}</p>
+              <p><strong>Diagnósticos o Problemas Clínicos:</strong> ${paciente.diagnosticosevolucion}</p>
+              <p><strong>Pronóstico:</strong> ${paciente.pronosticoevolucion}</p>
+              <p><strong>Tratamiento e Indicaciones Médicas:</strong> ${paciente.tratamientoindicaciones}</p>
+              <p><strong>Criterios Diagnósticos:</strong> ${paciente.criteriosdiagnosticos}</p>
+              <p><strong>Plan de Estudios:</strong> ${paciente.planestudios}</p>
+              <p><strong>Sugerencias Diagnósticas y Tratamiento:</strong> ${paciente.sugerenciasdiagnosticas}</p>
+            </div>
+          </div>
+          <div class="section-title">Nota Médica en Urgencias</div>
+          <div class="section-content">
+            <div class="mb-3">
+              <p><strong>Fecha y Hora de Atención:</strong> ${paciente.fechahoraatencion}</p>
+              <p><strong>Signos Vitales:</strong> ${paciente.signosvitalesurgencias}</p>
+              <p><strong>Motivo de la Atención:</strong> ${paciente.motivoatencion}</p>
+              <p><strong>Resumen del Interrogatorio:</strong> ${paciente.resumeninterrogatorio}</p>
+              <p><strong>Resultados Relevantes de Estudios:</strong> ${paciente.resultadosrelevantesurgencias}</p>
+              <p><strong>Diagnósticos o Problemas Clínicos:</strong> ${paciente.diagnosticosurgencias}</p>
+              <p><strong>Tratamiento y Pronóstico:</strong> ${paciente.tratamientopronostico}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   `;
+  $('#detallesModal').modal('show');
 };
+
+// Configurar el modal para que sea más amplio
+$('#detallesModal').on('show.bs.modal', function () {
+  $(this).find('.modal-dialog').addClass('modal-wide');
+});
+
+
 
 document.addEventListener('DOMContentLoaded', async () => {
   try {
@@ -148,21 +248,24 @@ document.addEventListener('DOMContentLoaded', async () => {
     mostrarPacientes(pacientes);
 
     const searchInput = document.getElementById('searchInput');
-    const searchButton = document.getElementById('searchButton');
 
     const filtrarPacientes = () => {
       const term = searchInput.value.toLowerCase();
-      const filteredPacientes = pacientes.filter(paciente =>
-        paciente.nombre.toLowerCase().includes(term) ||
-        paciente.apellidos.toLowerCase().includes(term) ||
-        paciente.genero.toLowerCase().includes(term) ||
-        paciente.edad.toLowerCase().includes(term) ||
-        paciente.id.toLowerCase().includes(term)
-      );
+      const filteredPacientes = pacientes.filter(paciente => {
+        // Verifica que las propiedades existen antes de usarlas
+        const nombre = paciente.nombre ? paciente.nombre.toLowerCase() : '';
+        const apellidos = paciente.apellidos ? paciente.apellidos.toLowerCase() : '';
+        const genero = paciente.genero ? paciente.genero.toLowerCase() : '';
+        const edad = paciente.edad ? paciente.edad.toString().toLowerCase() : ''; // Convertir edad a string
+        const id = paciente.id ? paciente.id.toLowerCase() : '';
+        
+        const nombreCompleto = `${nombre} ${apellidos}`.trim();
+        
+        return nombre.includes(term) || apellidos.includes(term) || nombreCompleto.includes(term) || genero.includes(term) || edad.includes(term) || id.includes(term);
+      });
       mostrarPacientes(filteredPacientes);
     };
 
-    searchButton.addEventListener('click', filtrarPacientes);
     searchInput.addEventListener('keyup', event => {
       if (event.key === 'Enter') {
         filtrarPacientes();
@@ -173,3 +276,4 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.error('Error obteniendo los pacientes:', error);
   }
 });
+

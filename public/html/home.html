@@ -10,19 +10,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <script type="module">
-        import { getLastAddedPatient } from '/js/firebaseconect.js';
-        import { auth } from '/js/firebaseconect.js'; // Import auth here
+        import { getTotalPacientes, getNuevosPacientesSemana } from '/js/firebaseconect.js';
+        import { auth } from '/js/firebaseconect.js';
     
-        document.addEventListener("DOMContentLoaded", async function() {
-            const patient = await getLastAddedPatient();
-            if (patient) {
-                const latestActivityList = document.querySelector('.list-group');
-                const newListItem = document.createElement('li');
-                newListItem.classList.add('list-group-item');
-                newListItem.textContent = `Nuevo paciente agregado: ${paciente.nombre} ${paciente.apellidos}`;
-                latestActivityList.appendChild(newListItem);
-            }
-        });
+    
     
         // Authentication check
         auth.onAuthStateChanged(user => {
@@ -31,70 +22,53 @@
             }
         });
     </script>
-    
 </head>
 <body>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
     <header></header>
-    
+    <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4"></nav>
     <main class="container">
         <div class="text-center mb-4">
-            <h1 class="display-4">Bienvenido al Expediente Clínico del Hospital Centro Medico Coscami</h1>
+            <h1 class="display-4">Bienvenido al Expediente Clínico del Hospital Centro Médico Coscami</h1>
             <p class="lead">Utiliza esta plataforma para gestionar y acceder a los expedientes clínicos de los pacientes de manera eficiente.</p>
         </div>
-
+        
         <div class="row">
+            <!-- Columna izquierda - Próximas Citas -->
             <div class="col-lg-6 mb-4">
-                <div class="card">
+                <div class="card shadow-sm">
                     <div class="card-body">
-                        <h5 class="card-title">Accesos Rápidos</h5>
-                        <button class="btn btn-primary me-2" onclick="location.href='verpacientes.html'">Ver Pacientes</button>
-                        <button class="btn btn-success" onclick="location.href='agregarpaciente.html'">Agregar Paciente</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-6 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Estadísticas</h5>
-                        <p>Total de Pacientes Registrados: <span id="totalPacientes"></span></p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-6 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Próximas Citas</h5>
-                        <ul class="list-group">
-                            <li class="list-group-item">Paciente: Juan Pérez - 10:00 AM</li>
-                            <li class="list-group-item">Paciente: María López - 11:00 AM</li>
+                        <h5 class="card-title">Recordatorios</h5>
+                        <form id="appointmentForm">
+                            <div class="mb-3">
+                                <label for="date" class="form-label">Fecha</label>
+                                <input type="date" id="date" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="time" class="form-label">Hora</label>
+                                <input type="time" id="time" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="patient" class="form-label">Nota</label>
+                                <textarea id="patient" class="form-control" rows="3" required></textarea>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary btn-block">Agregar Cita</button>
+                            </div>
+                        </form>
+                        <ul id="upcomingAppointments" class="list-group mt-3">
+                            <!-- Las citas se cargarán aquí -->
                         </ul>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-6 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Últimas Actividades</h5>
-                        <ul class="list-group">
-                            <!-- Aquí se agregará el último paciente dinámicamente -->
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-6 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Noticias y Actualizaciones</h5>
-                        <p class="card-text">Actualización del sistema programada para el 15 de junio.</p>
                     </div>
                 </div>
             </div>
         </div>
+        
+    
+           
     </main>
+    
+    
 
     <footer></footer>
 
@@ -102,6 +76,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script type="module" src="/js/firebaseconect.js"></script>
+
     <script type="module">
         import { ManageAccount } from '/js/firebaseconect.js';
         
@@ -116,7 +91,79 @@
             }
         });
     </script>
-
     <script src="/js/scripts.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const appointmentForm = document.getElementById('appointmentForm');
+            const upcomingAppointments = document.getElementById('upcomingAppointments');
+    
+            // Función para cargar citas desde localStorage al cargar la página
+            const loadAppointments = () => {
+                const appointments = JSON.parse(localStorage.getItem('appointments')) || [];
+                appointments.forEach(app => addAppointment(app.date, app.time, app.patient, app.isDone));
+            };
+    
+            // Función para guardar citas en localStorage
+            const saveAppointments = () => {
+                const appointments = [];
+                document.querySelectorAll('#upcomingAppointments .list-group-item').forEach(item => {
+                    const details = item.querySelector('.appointment-details').textContent.split(' - ');
+                    const [dateTime, patient] = details;
+                    const [date, time] = dateTime.split(' ');
+                    const isDone = item.classList.contains('done');
+                    appointments.push({ date, time, patient, isDone });
+                });
+                localStorage.setItem('appointments', JSON.stringify(appointments));
+            };
+    
+            // Función para agregar cita a la lista
+            const addAppointment = (date, time, patient, isDone = false) => {
+                const listItem = document.createElement('li');
+                listItem.className = `list-group-item ${isDone ? 'done' : ''}`;
+                listItem.innerHTML = `
+                    <span class="appointment-details">${date} ${time} - ${patient}</span>
+                    <div>
+                        <button class="btn btn-success btn-sm" onclick="completeAppointment(this)">
+                            <i class="fas fa-check"></i> Hecho
+                        </button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteAppointment(this)">
+                            <i class="fas fa-trash"></i> Eliminar
+                        </button>
+                    </div>
+                `;
+                upcomingAppointments.appendChild(listItem);
+                saveAppointments(); // Guardar automáticamente al agregar
+            };
+    
+            // Función para manejar el evento de envío del formulario
+            appointmentForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const date = document.getElementById('date').value;
+                const time = document.getElementById('time').value;
+                const patient = document.getElementById('patient').value;
+                addAppointment(date, time, patient);
+                appointmentForm.reset();
+            });
+    
+            // Función para eliminar cita de la lista
+            window.deleteAppointment = (button) => {
+                const listItem = button.parentElement.parentElement;
+                upcomingAppointments.removeChild(listItem);
+                saveAppointments();
+            };
+    
+            // Función para marcar cita como hecha
+            window.completeAppointment = (button) => {
+                const listItem = button.parentElement.parentElement;
+                listItem.classList.toggle('done');
+                saveAppointments();
+            };
+    
+            // Cargar citas desde localStorage al cargar la página
+            loadAppointments();
+        });
+    </script>
+    
+        
 </body>
 </html>
