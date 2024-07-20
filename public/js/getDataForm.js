@@ -72,10 +72,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const habitusExterior = expedienteForm['habitus'].value;
         const peso = expedienteForm['peso'].value;
         const talla = expedienteForm['talla'].value;
-        const fc = expedienteForm['FC'].value;
-        const ta = expedienteForm['TA'].value;
-        const fr = expedienteForm['FR'].value;
-        const t = expedienteForm['T'].value;
+        const FC = expedienteForm['FC'].value;
+        const TA = expedienteForm['TA'].value;
+        const FR = expedienteForm['FR'].value;
+        const T = expedienteForm['T'].value;
         const datosCabeza = expedienteForm['datoscabeza'].value;
         const datosCuello = expedienteForm['datoscuello'].value;
 

@@ -22,7 +22,7 @@ header.innerHTML = `
       align-items: center;
       max-width: 1200px;
       margin: 0 auto;
-      padding: 0 20px;
+      padding: 10 20px;
     }
 
     .logo img {
@@ -87,19 +87,18 @@ header.innerHTML = `
   </style>
 
 <div class="navbar-container">
-      <div class="logo">
-        <a href="home.html">
-          <img src="/img/logo.png" alt="Centro Medico Coscami">
-        </a>
-      </div>
-      <div id="nav">
-        <a href="home.html"><i class="nav-icon fas fa-home"></i> Home</a>
-        <a href="verpacientes.html"><i class="nav-icon fas fa-list-alt"></i> Ver pacientes</a>
-        <a href="agregarpaciente.html"><i class="nav-icon fas fa-user-plus"></i> Agregar Pacientes</a>
-        <button type="button" id="logoutButton"><i class="nav-icon fas fa-sign-out-alt"></i> Cerrar Sesión</button>
-        
-      </div>
-    </div>
+       <div class="logo">
+    <a href="home.html">
+      <img src="/img/logo.png" alt="Centro Medico Coscami">
+    </a>
+  </div>
+  <div id="nav">
+    <a href="home.html"><i class="nav-icon fas fa-home"></i> Home</a>
+    <a href="verpacientes.html"><i class="nav-icon fas fa-list-alt"></i> Ver pacientes</a>
+    <a href="agregarpaciente.html"><i class="nav-icon fas fa-users"></i> Agregar Pacientes</a>
+    <a href="registrarUser.html"><i class="nav-icon fas fa-user-md"></i> Registrar Usuarios</a>
+    <button type="button" id="logoutButton"><i class="nav-icon fas fa-sign-out-alt"></i> Cerrar Sesión</button>
+  </div>
 `;
 
 footer.innerHTML = `

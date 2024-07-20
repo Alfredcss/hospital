@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agregar Nuevo Usuario</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>Agregar Nuevo Usuario</h2>
+        <form id="addUserForm">
+            <div class="mb-3">
+                <label for="userName" class="form-label">Nombre</label>
+                <input type="text" class="form-control" id="userName" required>
+            </div>
+            <div class="mb-3">
+                <label for="userEmail" class="form-label">Correo Electrónico</label>
+                <input type="email" class="form-control" id="userEmail" required>
+            </div>
+            <div class="mb-3">
+                <label for="rol" class="form-label">Tipo de Usuario</label>
+                <select id="rol" name="rol" class="form-control" required>
+                    <option value="medico">Médico</option>
+                    <option value="recepcionista">Recepcionista</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="userPassword" class="form-label">Contraseña</label>
+                <input type="password" class="form-control" id="userPassword" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Agregar Usuario</button>
+        </form>
+    </div>
+
+    <script type="module">
+        // Your web app's Firebase configuration
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+        import { getFirestore, collection, addDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC5FtYUL8Br1yyzjPVob_f5NxH8RGJHQYU",
+            authDomain: "expediente-1ed23.firebaseapp.com",
+            projectId: "expediente-1ed23",
+            storageBucket: "expediente-1ed23.appspot.com",
+            messagingSenderId: "281693892079",
+            appId: "1:281693892079:web:ce51c550f275e7ff219a1a"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const addUserForm = document.getElementById('addUserForm');
+
+            addUserForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const name = document.getElementById('userName').value;
+                const email = document.getElementById('userEmail').value;
+                const password = document.getElementById('userPassword').value;
+                const role = document.getElementById('rol').value;
+
+                try {
+                    // Verifica la contraseña del administrador
+                    // Crea el nuevo usuario
+                    await createUserWithEmailAndPassword(auth, email, password);
+
+                    // Opcional: Guardar el nombre, correo electrónico y rol en Firestore
+                    await addDoc(collection(db, 'users'), {
+                        name,
+                        email,
+                        role
+                    });
+
+                    Swal.fire('Usuario guardado con éxito', '', 'success');
+                    addUserForm.reset();
+                } catch (error) {
+                    console.error('Error guardando el usuario: ', error);
+                    Swal.fire('Hubo un error guardando el usuario', error.message, 'error');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
